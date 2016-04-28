@@ -8,18 +8,22 @@ var UserSchema = Schema({
         required: true,
         unique: true,
         minlength: [3, 'Min Length rja'],
-        maxlength: [32, 'Max length rja'],
-        filter: true
+        maxlength: [32, 'Max length rja']
     },
     age: {
         type: Number,
-        required: true,
-        filter: true
+        required: true
     },
-    friend: [{
+    friends: [{
         type: ObjectId,
         ref: 'user'
     }]
 });
+
+UserSchema.options = {
+    defaultSortField: '_id',
+    defaultLimit: 2,
+    filterField: 'name'
+};
 
 module.exports = mongoose.model('user', UserSchema);

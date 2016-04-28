@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var ObjectId = require('mongodb').ObjectID;
 var Validator = require('./helpers/validator');
 var Aggregator = require('./helpers/aggregator');
 
@@ -31,7 +32,18 @@ module.exports = function (ModelName) {
     };
 
     this.getItem = function (req, res, next) {
+        var id = ObjectId(req.params.id);
+        var query = req.query || {};
+        var aggregateObj = aggregator.filter(query, [{$match: {_id: id}}]);
+        aggregator.expand(query, aggregateObj);
 
+        Model.aggregate(aggregateObj).exec(function (err, models) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(models[0]);
+        });
     };
 
     this.createItem = function (req, res, next) {

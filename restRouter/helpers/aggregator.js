@@ -3,24 +3,23 @@ var ObjectId = require('mongodb').ObjectID;
 var validator = require('validator');
 var _ = require('underscore');
 
-var defaultSortField = '_id';
-var defaultLimit = 100;
-
 module.exports = function (Model) {
     var Schema = Model.schema;
+    var paths = Schema.paths;
     var tree = Schema.tree;
-    var filterFields = getFilterFields();
     var expandFields = getExpandFields();
+    var options = Schema.options || {};
 
     this.filter = function (query, aggregateObj) {
+        var filterField = options.filterField || '_id';
+        var type = paths[filterField].instance;
         var filterValues = query.filter;
-        var i = filterFields.length;
-        var j;
-        var value;
-        var keyValueObj;
         var filterObj = [];
+        var keyValueObj;
+        var value;
+        var i;
 
-        if (!filterValues || !i) {
+        if (!filterValues) {
             return aggregateObj;
         }
 
@@ -28,17 +27,17 @@ module.exports = function (Model) {
             filterValues = [filterValues];
         }
 
+        i = filterValues.length;
         while (i--) {
-            j = filterValues.length;
-            while (j--) {
-                value = filterValues[j];
-                value = validator.isMongoId(value) ? ObjectId(value) : value;
+            value = filterValues[i];
+            value = type == 'ObjectID' ? ObjectId(value) : value;
+            value = type == 'Number' ? Number(value) : value;
+            value = type == 'Date' ? new Date(value) : value;
 
-                keyValueObj = {};
-                keyValueObj[filterFields[i]] = value;
+            keyValueObj = {};
+            keyValueObj[filterField] = value;
 
-                filterObj.push(keyValueObj);
-            }
+            filterObj.push(keyValueObj);
         }
         aggregateObj.push({$match: {$or: filterObj}});
 
@@ -46,7 +45,8 @@ module.exports = function (Model) {
     };
 
     this.expand = function (query, aggregateObj) {
-        var expandValues = query.expand;
+        var expandValues = query.expand || {};
+        ;
         var i = expandValues.length;
         var j;
         var value;
@@ -55,7 +55,7 @@ module.exports = function (Model) {
             return aggregateObj;
         }
 
-        if(!(expandValues instanceof Array)) {
+        if (!(expandValues instanceof Array)) {
             expandValues = [expandValues];
         }
 
@@ -76,11 +76,11 @@ module.exports = function (Model) {
         return aggregateObj;
     };
 
-    this.paginate = function(query, aggregateObj, cb) {
-        var sortField = query.sortfield || defaultSortField;
-        var sortOrder = query.sortorder || 1;
-        var skip = query.skip || 0;
-        var limit = query.limit || defaultLimit;
+    this.paginate = function (query, aggregateObj, cb) {
+        var sortField = query.sortfield || options.defaultSortField || '_id';
+        var sortOrder = parseInt(query.sortorder) || 1;
+        var skip = parseInt(query.skip) || 0;
+        var limit = parseInt(query.limit) || options.defaultLimit || 100;
         var sortObj = {};
         sortObj[sortField] = sortOrder;
 
@@ -101,40 +101,26 @@ module.exports = function (Model) {
                 $limit: limit
             });
 
+            countObj[0] = countObj[0] || {};
             cb(err, countObj[0].count, aggregateObj);
         });
     };
 
 
-    function getFilterFields() {
-        var keys = Object.keys(tree);
-        var i = keys.length;
-        var filterFields = [];
-
-        while (i--) {
-            tree[keys[i]].filter ? filterFields.push(keys[i]) : '';
-        }
-
-        return filterFields;
-    }
-
     function getExpandFields() {
-        var keys = Object.keys(tree);
-        var i = keys.length;
+        var keys = Object.keys(paths);
         var expandFields = [];
+        var i = keys.length;
         var path;
+        var type;
         var key;
 
-        while(i--) {
+        while (i--) {
             if ((key = keys[i]) == '_id') continue;
-            path = tree[key];
-
-            if (path instanceof Array) {
-                path[0].type.schemaName == 'ObjectId' ? expandFields.push(keys[i]) : '';
-            } else {
-                path.type = path.type || {};
-                path.type.schemaName == 'ObjectId' ? expandFields.push(keys[i]) : '';
-            }
+            path = paths[key];
+            type = path.instance;
+            type = type == 'Array' ? path.caster.instance : type;
+            type == 'ObjectID' ? expandFields.push(key) : '';
         }
 
         return expandFields;
@@ -209,7 +195,8 @@ module.exports = function (Model) {
                 from: childCollectionName,
                 foreignField: '_id',
                 localField: childPathName,
-                as: childPathName}
+                as: childPathName
+            }
         }, {
             $project: projectObj
         });
