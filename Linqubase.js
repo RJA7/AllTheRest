@@ -21,6 +21,7 @@ function fill() {
         user.name = 'namer' + i;
         user.age = i;
         user.friends = friends;
+        user.password = i + 'pass';
         user.save();
         friends.push(user);
     }

@@ -17,13 +17,28 @@ var UserSchema = Schema({
     friends: [{
         type: ObjectId,
         ref: 'user'
-    }]
+    }],
+    avatar: {
+        type: String
+    },
+    password: {
+        type: String,
+        set: function (pass) {
+            return pass; //crypt
+        },
+        secureIn: 1,
+        secureOut: 100
+    }
 });
 
 UserSchema.options = {
     defaultSortField: '_id',
     defaultLimit: 2,
-    filterField: 'name'
+    filterField: 'name',
+    defaultSecureIn: 0,
+    defaultSecureOut: 0,
+
+    files: [{path: 'avatar', uploadPath: './public/images/', width: 100, height: 100}]
 };
 
 module.exports = mongoose.model('user', UserSchema);
