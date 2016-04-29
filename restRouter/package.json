@@ -1,6 +1,6 @@
 {
   "name": "rest-router",
-  "version": "0.1.3",
+  "version": "0.1.5",
   "description": "All The Rest. Universal router for all models.",
   "main": "index.js",
   "scripts": {

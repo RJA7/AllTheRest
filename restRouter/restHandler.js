@@ -110,7 +110,7 @@ module.exports = function (ModelName) {
         validate(model, false);
         secure.importFilter(role, model);
 
-        Model.findByIdAndUpdate(id, {$set: body}, function (err, model) {
+        Model.findByIdAndUpdate(id, {$set: model}, function (err, model) {
             if (err) {
                 return next(err);
             }
