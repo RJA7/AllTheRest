@@ -17,6 +17,7 @@
     "winston": "latest",
     "mongodb": "latest",
     "validator": "latest",
-    "underscore": "latest"
+    "underscore": "latest",
+    "rest-router": "latest"
   }
 }

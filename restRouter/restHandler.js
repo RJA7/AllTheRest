@@ -13,12 +13,10 @@ module.exports = function (ModelName) {
     var init = options.init;
     var validate = options.validate;
     if (!init || typeof init !== 'function') {
-        init = function () {
-        }
+        init = function () {}
     }
     if (!validate || typeof validate !== 'function') {
-        validate = function () {
-        }
+        validate = function () {}
     }
 
     this.getItems = function (req, res, next) {
