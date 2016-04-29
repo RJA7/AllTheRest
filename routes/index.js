@@ -1,4 +1,4 @@
-var restRouter = require('rest-router');
+var restRouter = require('../restRouter');    //require('rest-router')
 
 module.exports = function (app) {
     app.use('/users', restRouter('user'));

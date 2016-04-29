@@ -72,7 +72,7 @@ module.exports = function (ModelName) {
         validate(model, true);
         secure.importFilter(role, model);
 
-        Model.create(body, function (err, model) {
+        Model.create(model, function (err, model) {
             if (err) {
                 return next(err);
             }
@@ -91,7 +91,7 @@ module.exports = function (ModelName) {
         validate(model, false);
         secure.importFilter(role, model);
 
-        Model.findByIdAndUpdate(id, body, function (err, model) {
+        Model.findByIdAndUpdate(id, model, function (err, model) {
             if (err) {
                 return next(err);
             }

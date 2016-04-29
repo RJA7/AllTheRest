@@ -23,7 +23,6 @@ var UserSchema = Schema({
     },
     password: {
         type: String,
-        secureIn: 1,
         secureOut: 100
     }
 });
