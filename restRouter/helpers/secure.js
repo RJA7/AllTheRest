@@ -1,10 +1,11 @@
 module.exports = function (Schema) {
     var tree = Schema.tree;
+    var keys = Object.keys(tree);
     var options = Schema.options || {};
     var defaultSecureOut = options.defaultSecureOut || 0;
+    var defaultSecureIn = options.defaultSecureIn || 0;
 
     this.exportFilter = function (role, models) {
-        var keys = Object.keys(tree);
         var i = keys.length;
         var j = models.length;
         var secureOut;
@@ -23,7 +24,17 @@ module.exports = function (Schema) {
         }
     };
 
-    this.importFilter = function () {
+    this.importFilter = function (role, model) {
+        var i = keys.length;
+        var secureIn;
+        var key;
 
+        while (i--) {
+            key = keys[i];
+            secureIn = tree[key].secureIn || defaultSecureIn;
+            if (role < secureIn) {
+                delete model[key];
+            }
+        }
     };
 };

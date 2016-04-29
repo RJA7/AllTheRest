@@ -9,6 +9,7 @@ module.exports = function (ModelName) {
     router.get('/:id', restHandler.getItem);
     router.post('/', restHandler.createItem);
     router.put('/:id', restHandler.changeItem);
+    router.patch('/:id', restHandler.updateItem);
     router.delete('/:id', restHandler.deleteItem);
 
     return router;
