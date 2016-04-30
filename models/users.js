@@ -30,11 +30,12 @@ var UserSchema = Schema({
 UserSchema.options = {
     defaultSortField: '_id',
     defaultLimit: 10,
-    filterField: 'name',
     defaultSecureIn: 0,
     defaultSecureOut: 0,
-    init: function (model) {console.log('init model'); },
-    validate: function (model, isNew) {console.log(isNew); }
+    filterField: 'age',                //string
+    searchFields: ['name', 'age'],       //array or string
+    init: function (req) {console.log('get files and save or change req.params.id...'); },
+    validate: function (model, isNew) {console.log(isNew + ' validate if you want'); }
 };
 
 module.exports = mongoose.model('user', UserSchema);

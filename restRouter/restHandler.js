@@ -22,10 +22,9 @@ module.exports = function (ModelName) {
     this.getItems = function (req, res, next) {
         var query = req.query || {};
         var aggregateObj = [];
-        var user = req.user || {};
-        var role = user.role || 0;
 
         aggregator.filter(query, aggregateObj);
+        aggregator.search(query, aggregateObj);
         aggregator.expand(query, aggregateObj);
         aggregator.paginate(query, aggregateObj, function (err, count, aggregateObj) {
             if (err) {
@@ -37,7 +36,7 @@ module.exports = function (ModelName) {
                     return next(err);
                 }
 
-                secure.exportFilter(role, models);
+                secure.exportFilter(req, models);
                 models.length ? models[0].totalCount = count : '';
                 res.status(200).send(models);
             });
@@ -48,10 +47,7 @@ module.exports = function (ModelName) {
         var id = ObjectId(req.params.id);
         var query = req.query || {};
         var aggregateObj = [{$match: {_id: id}}];
-        var user = req.user || {};
-        var role = user.role || 0;
 
-        aggregator.filter(query, aggregateObj);
         aggregator.expand(query, aggregateObj);
 
         Model.aggregate(aggregateObj).exec(function (err, models) {
@@ -59,18 +55,16 @@ module.exports = function (ModelName) {
                 return next(err);
             }
 
-            secure.exportFilter(role, models);
+            secure.exportFilter(req, models);
             res.status(200).send(models[0]);
         });
     };
 
     this.createItem = function (req, res, next) {
+        init(req);
         var model = req.body || {};
-        var user = req.user || {};
-        var role = user.role || 0;
-        init(model);
         validate(model, true);
-        secure.importFilter(role, model);
+        secure.importFilter(req, model);
 
         Model.create(model, function (err, model) {
             if (err) {
@@ -83,13 +77,11 @@ module.exports = function (ModelName) {
     };
 
     this.changeItem = function (req, res, next) {
+        init(req);
         var id = req.params.id;
         var model = req.body || {};
-        var user = req.user || {};
-        var role = user.role || 0;
-        init(model);
         validate(model, false);
-        secure.importFilter(role, model);
+        secure.importFilter(req, model);
 
         Model.findByIdAndUpdate(id, model, function (err, model) {
             if (err) {
@@ -102,13 +94,11 @@ module.exports = function (ModelName) {
     };
 
     this.updateItem = function (req, res, next) {
+        init(req);
         var id = req.params.id;
         var model = req.body || {};
-        var user = req.user || {};
-        var role = user.role || 0;
-        init(model);
         validate(model, false);
-        secure.importFilter(role, model);
+        secure.importFilter(req, model);
 
         Model.findByIdAndUpdate(id, {$set: model}, function (err, model) {
             if (err) {
@@ -125,6 +115,7 @@ module.exports = function (ModelName) {
             if (err) {
                 return next(err);
             }
+            secure.exportFilter(req, [model]);
 
             return res.status(200).send(model);
         });

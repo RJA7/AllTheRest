@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var ObjectId = require('mongodb').ObjectID;
-var validator = require('validator');
 var _ = require('underscore');
+var escape = require('escape-html');
 
 module.exports = function (Model) {
     var Schema = Model.schema;
@@ -29,7 +29,7 @@ module.exports = function (Model) {
 
         i = filterValues.length;
         while (i--) {
-            value = filterValues[i];
+            value = escape(filterValues[i]);
             value = type == 'ObjectID' ? ObjectId(value) : value;
             value = type == 'Number' ? Number(value) : value;
             value = type == 'Date' ? new Date(value) : value;
@@ -40,8 +40,29 @@ module.exports = function (Model) {
             filterObj.push(keyValueObj);
         }
         aggregateObj.push({$match: {$or: filterObj}});
+    };
 
-        return aggregateObj;
+    this.search = function (query, aggregateObj) {
+        var searchFields = options.searchFields;
+        var i = searchFields.length;
+        var value = query.search;
+        var searchObj = [];
+        var keyValueObj;
+
+        if (!value || !i) return;
+
+        if (!(searchFields instanceof Array)) {
+            searchFields = [searchFields];
+        }
+
+        value = escape(query.search);
+        while (i--) {
+            keyValueObj = {};
+            keyValueObj[searchFields[i]] = {$regex: value, $options: 'i'};
+
+            searchObj.push(keyValueObj);
+        }
+        aggregateObj.push({$match: {$or: searchObj}});
     };
 
     this.expand = function (query, aggregateObj) {

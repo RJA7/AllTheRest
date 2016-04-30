@@ -5,7 +5,9 @@ module.exports = function (Schema) {
     var defaultSecureOut = options.defaultSecureOut || 0;
     var defaultSecureIn = options.defaultSecureIn || 0;
 
-    this.exportFilter = function (role, models) {
+    this.exportFilter = function (req, models) {
+        var user = req.user || {};
+        var role = user.role || 0;
         var i = keys.length;
         var j = models.length;
         var secureOut;
@@ -24,7 +26,9 @@ module.exports = function (Schema) {
         }
     };
 
-    this.importFilter = function (role, model) {
+    this.importFilter = function (req, model) {
+        var user = req.user || {};
+        var role = user.role || 0;
         var i = keys.length;
         var secureIn;
         var key;

@@ -1,6 +1,6 @@
 {
   "name": "rest-router",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "All The Rest. Universal router for all models.",
   "main": "index.js",
   "scripts": {
@@ -19,5 +19,11 @@
   "bugs": {
     "url": "https://github.com/RJA7/AllTheRest/issues"
   },
-  "homepage": "https://github.com/RJA7/AllTheRest#readme"
+  "homepage": "https://github.com/RJA7/AllTheRest#readme",
+  "dependencies": {
+    "mongoose": "latest",
+    "mongodb": "latest",
+    "underscore": "latest",
+    "escape-html": "latest"
+  }
 }
