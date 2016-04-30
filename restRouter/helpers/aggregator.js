@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
 var ObjectId = require('mongodb').ObjectID;
-var _ = require('underscore');
 var escape = require('escape-html');
 
 module.exports = function (Model) {
@@ -67,7 +66,6 @@ module.exports = function (Model) {
 
     this.expand = function (query, aggregateObj) {
         var expandValues = query.expand || {};
-        ;
         var i = expandValues.length;
         var j;
         var value;
@@ -101,7 +99,7 @@ module.exports = function (Model) {
         var sortField = query.sortfield || options.defaultSortField || '_id';
         var sortOrder = parseInt(query.sortorder) || 1;
         var skip = parseInt(query.skip) || 0;
-        var limit = parseInt(query.limit) || options.defaultLimit || 100;
+        var limit = parseInt(query.limit) || options.defaultLimit || Number.MAX_VALUE;
         var sortObj = {};
         sortObj[sortField] = sortOrder;
 
@@ -253,8 +251,13 @@ module.exports = function (Model) {
     }
 
     function filter(arr) {
-        return _.filter(arr, function (val) {
-            return val !== '__v' && val !== 'id';
-        });
+        var i = arr.length;
+        while (i--) {
+            if (arr[i] == 'id' || arr[i] == '__v') {
+                delete arr[i];
+            }
+        }
+
+        return arr;
     }
 };

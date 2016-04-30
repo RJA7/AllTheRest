@@ -9,9 +9,9 @@ module.exports = function (Schema) {
         var user = req.user || {};
         var role = user.role || 0;
         var i = keys.length;
-        var j = models.length;
         var secureOut;
         var key;
+        var j;
 
         if (!j) return;
 
@@ -19,6 +19,7 @@ module.exports = function (Schema) {
             key = keys[i];
             secureOut = tree[key].secureOut || defaultSecureOut;
             if (role < secureOut) {
+                j = models.length;
                 while (j--) {
                     delete models[j][key];
                 }

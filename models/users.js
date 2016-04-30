@@ -27,13 +27,14 @@ var UserSchema = Schema({
     }
 });
 
+//All attributes are optional
 UserSchema.options = {
     defaultSortField: '_id',
     defaultLimit: 10,
     defaultSecureIn: 0,
     defaultSecureOut: 0,
-    filterField: 'age',                //string
-    searchFields: ['name', 'age'],       //array or string
+    filterField: 'age',                     //string
+    searchFields: ['name', 'age'],          //array or string
     init: function (req) {console.log('get files and save or change req.params.id...'); },
     validate: function (model, isNew) {console.log(isNew + ' validate if you want'); }
 };
