@@ -4,10 +4,10 @@ var escape = require('escape-html');
 
 module.exports = function (Model) {
     var Schema = Model.schema;
+    var options = Schema.options || {};
     var paths = Schema.paths;
     var tree = Schema.tree;
     var expandFields = getExpandFields();
-    var options = Schema.options || {};
 
     this.filter = function (query, aggregateObj) {
         var filterField = options.filterField || '_id';
@@ -18,9 +18,7 @@ module.exports = function (Model) {
         var value;
         var i;
 
-        if (!filterValues) {
-            return aggregateObj;
-        }
+        if (!filterValues) return;
 
         if (!(filterValues instanceof Array)) {
             filterValues = [filterValues];

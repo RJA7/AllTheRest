@@ -44,6 +44,7 @@ module.exports = function (ModelName) {
     };
 
     this.getItem = function (req, res, next) {
+        init(req);
         var id = ObjectId(req.params.id);
         var query = req.query || {};
         var aggregateObj = [{$match: {_id: id}}];

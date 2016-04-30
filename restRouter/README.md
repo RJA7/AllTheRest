@@ -4,7 +4,7 @@ How to use:
 <pre>
 //routes
 var restRouter = require('rest-router');
-app.use('/users', restRouter('user'));      // where user is name of mongo model
+app.use('/users', restRouter('user'));      // where user is name of mongoose Model
 
 
 //models
@@ -32,18 +32,19 @@ UserSchema.options = {
     filterField: 'age',                     //string
     searchFields: ['name', 'age'],          //array or string
 
-    //calling before create, update or change model. Use it for save file or
-    //or change req.params.id...
-    init: function (req) {console.log('get files'); },
+    //calling before get, create, update or change model.
+    init: function (req) {req.params.id = req.session.user._id; },
 
     //calling before create, update or change model. model = req.body;
     validate: function (model, isNew) {console.log(isNew); }
 };
 
 module.exports = mongoose.model('user', UserSchema);
+
+
 </pre>
 
-<p>
+<pre>
 And now you can use:
 localhost/users?expand=friends&filter=someUserName&
             sortfield=age&sortorder=-1&skip=2&limit=10&search=nameAge
@@ -63,4 +64,4 @@ localhost/users?expand=friends&filter=someUserName&
     if path has secureIn or secureOut upper than user role,
     it have being deleted.
     role = req.user.role || 0;
-</p>
+</pre>
