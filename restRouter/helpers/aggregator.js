@@ -40,7 +40,7 @@ module.exports = function (Model) {
     };
 
     this.search = function (query, aggregateObj) {
-        var searchFields = options.searchFields;
+        var searchFields = options.searchFields || [];
         var i = searchFields.length;
         var value = query.search;
         var searchObj = [];
@@ -65,12 +65,10 @@ module.exports = function (Model) {
     this.expand = function (query, aggregateObj) {
         var expandValues = query.expand || {};
         var i = expandValues.length;
-        var j;
         var value;
+        var j;
 
-        if (!expandValues || !i) {
-            return aggregateObj;
-        }
+        if (!expandValues || !i) return;
 
         if (!(expandValues instanceof Array)) {
             expandValues = [expandValues];
@@ -89,8 +87,6 @@ module.exports = function (Model) {
                 }
             }
         }
-
-        return aggregateObj;
     };
 
     this.paginate = function (query, aggregateObj, cb) {
@@ -149,14 +145,14 @@ module.exports = function (Model) {
         var projectObj = {};
         var childModel;
         var childCollectionName;
-        var i;
+        var i = parentKeys.length;
 
         if (!childModelName) return;
 
         childModel = mongoose.model(childModelName);
         childCollectionName = childModel.collection.collectionName;
 
-        for (i = 0; i < parentKeys.length; i++) {
+        while (i--) {
             if (parentKeys[i] === childPathName) {
                 projectObj[parentKeys[i]] = {$arrayElemAt: ['$' + childPathName, 0]};
                 continue;
@@ -179,6 +175,7 @@ module.exports = function (Model) {
     function many(aggregateObj, childPathName) {
         var parentKeys = filter(Object.keys(tree));
         var childModelName = tree[childPathName][0].ref;
+        var i = parentKeys.length;
         var projectObj = {};
         var childGroup = {};
         var _idGroup = {};
@@ -186,7 +183,6 @@ module.exports = function (Model) {
         var childCollectionName;
         var childModel;
         var childKeys;
-        var i;
 
         if (!childModelName) return;
 
@@ -194,7 +190,7 @@ module.exports = function (Model) {
         childCollectionName = childModel.collection.collectionName;
         childKeys = filter(Object.keys(childModel.schema.tree));
 
-        for (i = 0; i < parentKeys.length; i++) {
+        while (i--) {
             if (parentKeys[i] === childPathName) {
                 projectObj[parentKeys[i]] = {$arrayElemAt: ['$' + childPathName, 0]};
                 continue;
@@ -219,21 +215,26 @@ module.exports = function (Model) {
         });
 
         //group
-        for (i = 0; i < parentKeys.length; i++) {
+        i = parentKeys.length;
+        while (i--) {
             if (parentKeys[i] === childPathName) {
                 continue;
             }
             _idGroup[parentKeys[i]] = '$' + parentKeys[i];
         }
-        for (i = 0; i < childKeys.length; i++) {
+
+        i = childKeys.length;
+        while (i--) {
             childGroup[childKeys[i]] = '$' + childPathName + '.' + childKeys[i];
         }
+
         group._id = _idGroup;
         group[childPathName] = {$push: childGroup};
 
         //project
         projectObj = {};
-        for (i = 0; i < parentKeys.length; i++) {
+        i = parentKeys.length;
+        while (i--) {
             if (parentKeys[i] === childPathName) {
                 projectObj[parentKeys[i]] = 1;
                 continue;

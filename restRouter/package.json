@@ -1,6 +1,6 @@
 {
   "name": "rest-router",
-  "version": "0.1.10",
+  "version": "0.1.12",
   "description": "All The Rest. Universal router for all models.",
   "main": "index.js",
   "scripts": {
@@ -23,6 +23,7 @@
   "dependencies": {
     "mongoose": "latest",
     "mongodb": "latest",
-    "escape-html": "latest"
+    "escape-html": "latest",
+    "express": "latest"
   }
 }
