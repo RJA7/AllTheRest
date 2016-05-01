@@ -112,6 +112,7 @@ module.exports = function (ModelName) {
     };
 
     this.deleteItem = function (req, res, next) {
+        init(req);
         Model.findByIdAndRemove(req.params.id, function (err, model) {
             if (err) {
                 return next(err);

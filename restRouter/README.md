@@ -32,13 +32,12 @@ UserSchema.options = {
     filterField: 'age',                     //string
     searchFields: ['name', 'age'],          //array or string
 
-    //calling before get, create, update or change model.
+    //calling on POST, GET (one), PUT, PATCH, DELETE request methods.
     init: function (req) {req.params.id = req.session.user._id; },
 
-    //calling before create, update or change model. model = req.body;
+    //calling on POST, PUT, PATCH. model = req.body;
     validate: function (model, isNew) {console.log(isNew); }
 };
-
 module.exports = mongoose.model('user', UserSchema);
 
 
@@ -46,7 +45,7 @@ module.exports = mongoose.model('user', UserSchema);
 
 <pre>
 And now you can use:
-localhost/users?expand=friends&filter=someUserName&
+localhost/users?expand=friends&filter=someUserAge&
             sortfield=age&sortorder=-1&skip=2&limit=10&search=nameAge
 
 1. expand=friends&expand=otherObjectIdField

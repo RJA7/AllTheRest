@@ -140,12 +140,12 @@ module.exports = function (Model) {
     }
 
     function one(aggregateObj, childPathName) {
-        var parentKeys = filter(Object.keys(tree));
         var childModelName = tree[childPathName].ref;
+        var parentKeys = filter(Object.keys(tree));
+        var i = parentKeys.length;
+        var childCollectionName;
         var projectObj = {};
         var childModel;
-        var childCollectionName;
-        var i = parentKeys.length;
 
         if (!childModelName) return;
 
@@ -176,11 +176,11 @@ module.exports = function (Model) {
         var parentKeys = filter(Object.keys(tree));
         var childModelName = tree[childPathName][0].ref;
         var i = parentKeys.length;
+        var childCollectionName;
         var projectObj = {};
         var childGroup = {};
         var _idGroup = {};
         var group = {};
-        var childCollectionName;
         var childModel;
         var childKeys;
 
