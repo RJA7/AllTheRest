@@ -44,7 +44,7 @@ module.exports = function (ModelName) {
     };
 
     this.getItem = function (req, res, next) {
-        init(req);
+        init(req, res, next);
         var id = ObjectId(req.params.id);
         var query = req.query || {};
         var aggregateObj = [{$match: {_id: id}}];
@@ -62,7 +62,7 @@ module.exports = function (ModelName) {
     };
 
     this.createItem = function (req, res, next) {
-        init(req);
+        init(req, res, next);
         var model = req.body || {};
         validate(model, true);
         secure.importFilter(req, model);
@@ -78,7 +78,7 @@ module.exports = function (ModelName) {
     };
 
     this.changeItem = function (req, res, next) {
-        init(req);
+        init(req, res, next);
         var id = req.params.id;
         var model = req.body || {};
         validate(model, false);
@@ -95,7 +95,7 @@ module.exports = function (ModelName) {
     };
 
     this.updateItem = function (req, res, next) {
-        init(req);
+        init(req, res, next);
         var id = req.params.id;
         var model = req.body || {};
         validate(model, false);
@@ -112,7 +112,7 @@ module.exports = function (ModelName) {
     };
 
     this.deleteItem = function (req, res, next) {
-        init(req);
+        init(req, res, next);
         Model.findByIdAndRemove(req.params.id, function (err, model) {
             if (err) {
                 return next(err);

@@ -13,8 +13,6 @@ module.exports = function (Schema) {
         var key;
         var j;
 
-        if (!j) return;
-
         while (i--) {
             key = keys[i];
             secureOut = tree[key].secureOut || defaultSecureOut;
